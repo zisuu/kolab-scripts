@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "Please enter new domain name (example: mydomain.ch)  :"
 read domainname
