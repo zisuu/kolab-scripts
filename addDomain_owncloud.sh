@@ -45,7 +45,7 @@ insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${dom
 insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_paging_size','500');
 insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_port','389');
 insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_quota_attr','');
-insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_quota_def','1024');
+insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_quota_def','');
 insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_tls','1');
 insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_turn_off_cert_check','0');
 insert into oc_appconfig (appid,configkey,configvalue) values('user_ldap','${domainid}ldap_user_filter_mode','1');
