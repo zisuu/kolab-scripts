@@ -4,8 +4,16 @@ echo "#####################################################################"
 date
 
 echo "--- START MYSQL BACKUP ---"
-# create Folders
-mkdir /backup/mysql/{db,log}
+# create Folder
+MYSQLFOLDER="/backup/mysqlBackup/"
+
+if [ ! -d ${MYSQLFOLDER} ] ; then
+        mkdir ${MYSQLFOLDER}
+        echo "Folder ${MYSQLFOLDER} has been created"
+else
+        echo "Folder ${MYSQLFOLDER} already exists"
+fi
+
 
 # define mysql access
 
@@ -75,21 +83,27 @@ done
 echo "--- MYSQL BACKUP DONE! ---"
 
 echo "--- BACKUP OWNCLOUD USER DATA ---"
-BACKUPDIR=/backup/owncloud/
-mkdir ${BACKUPDIR}
+# create Folder
+OCFOLDER="/backup/owncloud/"
+
+if [ ! -d ${OCFOLDER} ] ; then
+        mkdir ${OCFOLDER}
+        echo "Folder ${OCFOLDER} has been created"
+else
+        echo "Folder ${OCFOLDER} already exists"
+fi
+
 BACKUPFILE=owncloud_backup_data_`date +%Y_%m_%d_%H_%M`.tar.bz2
 
-tar cjpf ${BACKUPDIR}${BACKUPFILE} /var/www/owncloud/data
+tar cjpf ${OCFOLDER}${BACKUPFILE} /var/www/owncloud/data
 
-find /backup/owncloud/ -name 'owncloud_backup_*' -mtime +31 -delete
+find ${OCFOLDER} -name 'owncloud_backup_*' -mtime +31 -delete
 echo "--- OWNCLOUD USER DATA BACKUP DONE! ---"
 
 
 echo "--- BACKUP OWNCLOUD CONFIG ---"
-BACKUPDIR=/backup/owncloud/
-mkdir ${BACKUPDIR}
 BACKUPFILE=owncloud_backup_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
 
-tar cjpf ${BACKUPDIR}${BACKUPFILE} /var/www/owncloud/config
+tar cjpf ${OCFOLDER}${BACKUPFILE} /var/www/owncloud/config
 
 echo "--- OWNCLOUD CONFIG BACKUP DONE!"

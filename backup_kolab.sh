@@ -5,12 +5,31 @@ date
 
 echo "--- START LDAP BACKUP ---"
 # create Folders
-mkdir /backup/ldapBackup
-mkdir /backup/ldapBackup/ldif
-mkdir /backup/ldapBackup/archive/
+LDAPFOLDER="/backup/ldapBackup"
+LDIFFOLDER="/backup/ldapBackup/ldif"
+ARCFOLDER="/backup/ldapBackup/archive"
+
+if [ ! -d ${LDAPFOLDER} ] ; then
+        mkdir ${LDAPFOLDER}
+        echo "Folder ${LDAPFOLDER} has been created"
+else
+        echo "Folder ${LDAPFOLDER} already exists"
+fi
+if [ ! -d ${LDIFFOLDER} ] ; then
+        mkdir ${LDIFFOLDER}
+        echo "Folder ${LDIFFOLDER} has been created"
+else
+        echo "Folder ${LDIFFOLDER} already exists"
+fi
+if [ ! -d ${ARCFOLDER} ] ; then
+        mkdir ${ARCFOLDER}
+        echo "Folder ${ARCFOLDER} has been created"
+else
+        echo "Folder ${ARCFOLDER} already exists"
+fi
 
 # cleanup last ldap backup
-find /backup/ldapBackup/ldif/ -maxdepth 1 -type f -name "*.ldif" -delete
+find ${LDIFFOLDER} -maxdepth 1 -type f -name "*.ldif" -delete
 
 
 # create new backup of ldap domains
@@ -21,25 +40,32 @@ for dir in `find /etc/dirsrv/ -mindepth 1 -maxdepth 1 -type d \
             -maxdepth 1 -type d | xargs -n 1 basename`; do
 
         /usr/sbin/ns-slapd db2ldif -D /etc/dirsrv/${dir} -n ${nsdb} -a - \
-             >  /backup/ldapBackup/ldif/$(hostname)-$(echo ${dir} | sed -e 's/slapd-//g')-${nsdb}.ldif
+             >  ${LDIFFOLDER}/$(hostname)-$(echo ${dir} | sed -e 's/slapd-//g')-${nsdb}.ldif
     done
 done
 
 # archive
-tar -czf /backup/ldapBackup/archive/dirsrv-$(date +'%Y%m%d-%H%M%S').tar.gz -C / etc/dirsrv/ backup/ldapBackup/ldif/
-find /backup/ldapBackup/archive/ -name 'dirsrv-*' -mtime +31 -type f -delete
+tar -czf ${ARCFOLDER}/dirsrv-$(date +'%Y%m%d-%H%M%S').tar.gz -C / /etc/dirsrv/ ${LDIFFOLDER}
+find ${ARCFOLDER} -name 'dirsrv-*' -mtime +31 -type f -delete
 
 echo "--- LDAP BACKUP DONE! ---"
 
 echo "--- START MYSQL BACKUP ---"
 # create Folders
-mkdir /backup/mysql/{db,log}
+MYSQLFOLDER="/backup/mysqlBackup/"
+
+if [ ! -d ${MYSQLFOLDER} ] ; then
+        mkdir ${MYSQLFOLDER}
+        echo "Folder ${MYSQLFOLDER} has been created"
+else
+        echo "Folder ${MYSQLFOLDER} already exists"
+fi
 
 # define mysql access
 
 USER="root"
-PASS="set password here"
-DIR="/backup/mysqlBackup/db"
+PASS="setpasswordhere"
+DIR="${MYSQLFOLDER}/db"
 
 # Connect to mysql
 
@@ -105,7 +131,7 @@ echo "--- MYSQL BACKUP DONE! ---"
 echo "--- START CYRUS BACKUP ---"
 
 # Location of the backup directory
-BACKUPDIR=/backup/cyrus/
+CYRUSFOLDERDIR=/backup/cyrus/
 
 # Name of the backup archive
 BACKUPFILE=cyrus_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
@@ -120,7 +146,7 @@ LOGFILE=/var/log/cyrus_backup.log
 # Lock file
 LOCK=/var/tmp/cyrus_backup.lock
 
-find /backup/cyrus/ -name 'cyrus_backup_*' -mtime +31 -delete
+find ${CYRUSFOLDERDIR} -name 'cyrus_backup_*' -mtime +31 -delete
 
 
 log()
@@ -140,13 +166,15 @@ fi
 
 touch ${LOCK}
 
-if [ ! -d ${BACKUPDIR} ] ; then
-  log "Creating backup directory"
-  mkdir -p ${BACKUPDIR}
+if [ ! -d ${CYRUSFOLDERDIR} ] ; then
+        mkdir ${CYRUSFOLDERDIR}
+        echo "Folder ${CYRUSFOLDERDIR} has been created"
+else
+        echo "Folder ${CYRUSFOLDERDIR} already exists"
 fi
 
 log "Suspending mail system"
-echo "Server Suspended ..." > /var/lib/imap/msg/shutdown
+echo "Cyrus IMAP suspended ..." > /var/lib/imap/msg/shutdown
 
 log "Starting backup process"
 umask 066
@@ -157,11 +185,13 @@ else
   su - cyrus -c "/usr/lib/cyrus-imapd/ctl_mboxlist -d" > /var/tmp/mailboxlist.txt
   usermod -s /sbin/nologin cyrus
 fi
-tar cjpf ${BACKUPDIR}${BACKUPFILE} ${SPOOLDIR} ${ACCOUNTINGDIR} /var/tmp/mailboxlist.txt
+tar cjpf ${CYRUSFOLDERDIR}${BACKUPFILE} ${SPOOLDIR} ${ACCOUNTINGDIR} /var/tmp/mailboxlist.txt
 rm -f /var/tmp/mailboxlist.txt
 
 log "Resuming mail system"
+
 rm -f /var/lib/imap/msg/shutdown
+echo "Cyrus IMAP resuming ..."
 postqueue -f
 
 rm -f ${LOCK}
@@ -170,20 +200,26 @@ echo "--- CYRUS BACKUP DONE! ---"
 
 echo "--- STARTING POSTFIX BACKUP ---"
 
-BACKUPDIR2=/backup/postfix/
-mkdir ${BACKUPDIR2}
+POSTFIXDIR=/backup/postfix/
 
-BACKUPFILE2_RUNNING=postfix_running_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
+if [ ! -d ${POSTFIXDIR} ] ; then
+        mkdir ${POSTFIXDIR}
+        echo "Folder ${POSTFIXDIR} has been created"
+else
+        echo "Folder ${POSTFIXDIR} already exists"
+fi
 
-BACKUPFILE2_STOP=postfix_stop_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
+POSTFIX_RUNNING=postfix_running_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
 
-find /backup/postfix/ -name 'postfix_*' -mtime +31 -delete
+POSTFIX_STOP=postfix_stop_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
 
-tar cjpf ${BACKUPDIR2}${BACKUPFILE2_RUNNING} /var/spool/postfix
+find ${POSTFIXDIR} -name 'postfix_*' -mtime +31 -delete
+
+tar cjpf ${POSTFIXDIR}${POSTFIX_RUNNING} /var/spool/postfix
 
 /etc/init.d/postfix stop
 
-tar cjpf ${BACKUPDIR2}${BACKUPFILE2_STOP} /var/spool/postfix
+tar cjpf ${POSTFIXDIR}${POSTFIX_STOP} /var/spool/postfix
 
 /etc/init.d/postfix start
 
