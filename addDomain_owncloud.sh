@@ -1,4 +1,6 @@
 #!/bin/bash
+# tested with ownCloud 8.0 (stable)
+
 
 echo '********** Please enter new domain name (example: dc=mydomain,dc=com)  :'
 read domainname
