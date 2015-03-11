@@ -93,11 +93,8 @@ else
         echo "Folder ${OCFOLDER} already exists"
 fi
 
-BACKUPFILE=owncloud_backup_data_`date +%Y_%m_%d_%H_%M`.tar.bz2
+rdiff-backup /var/www/owncloud/data ${OCFOLDER}
 
-tar cjpf ${OCFOLDER}${BACKUPFILE} /var/www/owncloud/data
-
-find ${OCFOLDER} -name 'owncloud_backup_*' -mtime +31 -delete
 echo "--- OWNCLOUD USER DATA BACKUP DONE! ---"
 
 
