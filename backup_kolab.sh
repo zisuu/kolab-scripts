@@ -225,3 +225,33 @@ tar cjpf ${POSTFIXDIR}${POSTFIX_STOP} /var/spool/postfix
 
 
 echo "--- POSTFIX BACKUP DONE! ---"
+
+
+echo "--- STARTING KOLAB CONFIG BACKUP ---"
+
+KOLABCONFDIR=/backup/kolabconf/
+
+if [ ! -d ${KOLABCONFDIR} ] ; then
+        mkdir ${KOLABCONFDIR}
+        echo "Folder ${KOLABCONFDIR} has been created"
+else
+        echo "Folder ${KOLABCONFDIR} already exists"
+fi
+
+KOLABCONF1=kolab_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
+KOLABCONF2=kolab-freebusy_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
+KOLABCONF3=kolab-syncroton_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
+KOLABCONF4=kolab-webadmin_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
+KOLABCONF5=roundcubemail_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
+KOLABCONF6=iRony_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
+
+find ${KOLABCONFDIR} -name 'kolab_*' -mtime +31 -delete
+
+tar cjpf ${KOLABCONFDIR}${KOLABCONF1} /usr/share/kolab/
+tar cjpf ${KOLABCONFDIR}${KOLABCONF2} /usr/share/kolab-freebusy/
+tar cjpf ${KOLABCONFDIR}${KOLABCONF3} /usr/share/kolab-syncroton/
+tar cjpf ${KOLABCONFDIR}${KOLABCONF4} /usr/share/kolab-webadmin/
+tar cjpf ${KOLABCONFDIR}${KOLABCONF5} /usr/share/roundcubemail
+tar cjpf ${KOLABCONFDIR}${KOLABCONF6} /usr/share/iRony/
+
+echo "--- KOLAB CONFIG BACKUP DONE! ---"
