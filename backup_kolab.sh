@@ -138,7 +138,7 @@ BACKUPFILE=cyrus_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
 
 # Path of the Cyrus spool and account directory
 SPOOLDIR=/var/spool/imap
-ACCOUNTINGDIR=/var/lib/imap/user
+ACCOUNTINGDIR=/var/lib/imap
 
 # Log file
 LOGFILE=/var/log/cyrus_backup.log
