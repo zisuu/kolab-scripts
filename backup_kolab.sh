@@ -255,3 +255,22 @@ tar cjpf ${KOLABCONFDIR}${KOLABCONF5} /usr/share/roundcubemail
 tar cjpf ${KOLABCONFDIR}${KOLABCONF6} /usr/share/iRony/
 
 echo "--- KOLAB CONFIG BACKUP DONE! ---"
+echo "--- STARTING SUPPORT WEB BACKUP ---"
+
+SUPPORTDIR=/backup/support/
+
+if [ ! -d ${SUPPORTDIR} ] ; then
+        mkdir ${SUPPORTDIR}
+        echo "Folder ${SUPPORTDIR} has been created"
+else
+        echo "Folder ${SUPPORTDIR} already exists"
+fi
+
+SUPPORTBKP=support_`date +%Y_%m_%d_%H_%M`.tar.bz2
+
+
+find ${SUPPORTDIR} -name 'support_*' -mtime +31 -delete
+
+tar cjpf ${SUPPORTDIR}${SUPPORTBKP} /var/www/support/
+
+echo "--- SUPPORT WEB BACKUP DONE! ---"
