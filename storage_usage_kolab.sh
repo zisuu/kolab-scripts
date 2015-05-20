@@ -5,5 +5,5 @@ echo "################## KOLAB ######################" >> $LOG
 
 for Dir in /var/spool/imap/domain/* `find . -type d`
 do
-        du -h --max-depth=1 ${Dir} | grep /var/spool/imap/domain/ >> $LOG
+        du -hm --max-depth=1 ${Dir} | grep /var/spool/imap/domain/ >> $LOG
 done
