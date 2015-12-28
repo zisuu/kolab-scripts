@@ -5,7 +5,7 @@ date
 
 echo "--- START MYSQL BACKUP ---"
 # create Folder
-MYSQLFOLDER="/backup/mysqlBackup/"
+MYSQLFOLDER="/yourmysqlbackupdir/"
 
 if [ ! -d ${MYSQLFOLDER} ] ; then
         mkdir ${MYSQLFOLDER}
@@ -18,8 +18,8 @@ fi
 # define mysql access
 
 USER="root"
-PASS="enteryourpasswordhere"
-DIR="/backup/mysqlBackup/db"
+PASS="yourPassword"
+DIR="/yourbackupDIR"
 
 # Connect to mysql
 
@@ -84,7 +84,7 @@ echo "--- MYSQL BACKUP DONE! ---"
 
 echo "--- BACKUP OWNCLOUD USER DATA ---"
 # create Folder
-OCFOLDER="/backup/owncloud/"
+OCFOLDER="/yourowncloudbackupfolder/"
 
 if [ ! -d ${OCFOLDER} ] ; then
         mkdir ${OCFOLDER}
@@ -95,6 +95,9 @@ fi
 
 rdiff-backup /var/www/owncloud/data ${OCFOLDER}
 
+# delete data backup files older than 4 weeks
+rdiff-backup  --force --remove-older-than 10W ${OCFOLDER}
+
 echo "--- OWNCLOUD USER DATA BACKUP DONE! ---"
 
 
@@ -104,3 +107,4 @@ BACKUPFILE=owncloud_backup_config_`date +%Y_%m_%d_%H_%M`.tar.bz2
 tar cjpf ${OCFOLDER}${BACKUPFILE} /var/www/owncloud/config
 
 echo "--- OWNCLOUD CONFIG BACKUP DONE!"
+

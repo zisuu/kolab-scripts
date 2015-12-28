@@ -7,8 +7,8 @@ read domainname
 ####### OWNCLOUD PART #######
 # count existing domains in Owncloud
 user="root"
-password="yourpasswordhere"
-dbname="owncloud_db"
+password="yourpassword"
+dbname="youOCdatabase"
 
 QUERY=$(echo "select configkey from oc_appconfig where configvalue='cn=Directory Manager';" | mysql -u $user -p$password $dbname | grep -o ldap | wc -l)
 RESULT=${QUERY}
@@ -17,8 +17,8 @@ echo '********** Please check the number of existing domains, is '${RESULT}' exi
 read answere
 
 # define Variables
-ldappwd="yourpasswordhere" 
-ldaphostip="youriphere"
+ldappwd="yourLDAPpassword" 
+ldaphostip="yourLDAPhostIP"
 
 if [ "${answere}" != "y" ]
 then
@@ -180,5 +180,5 @@ autocreate_folders = {
         '/private/vendor/kolab/folder-type': \"mail.wastebasket\",
         },
         },
-        }" | ssh root@yourhost "cat >> /etc/kolab/kolab.conf"
-echo "********** New Domain $strkolab successfully added to /etc/kolab/kolab.conf"
+        }" | ssh root@$ldaphostip "cat >> /etc/kolab/kolab.conf"
+echo "********** New Domain $strkolab successfully added to /etc/kolab/kolab.conf on $ldaphostip"

@@ -5,9 +5,9 @@ date
 
 echo "--- START LDAP BACKUP ---"
 # create Folders
-LDAPFOLDER="/backup/ldapBackup"
-LDIFFOLDER="/backup/ldapBackup/ldif"
-ARCFOLDER="/backup/ldapBackup/archive"
+LDAPFOLDER="/yourldapBackupfolder"
+LDIFFOLDER="/yourldapBackupfolder/ldif"
+ARCFOLDER="/yourldapBackupfolder/archive"
 
 if [ ! -d ${LDAPFOLDER} ] ; then
         mkdir ${LDAPFOLDER}
@@ -52,7 +52,7 @@ echo "--- LDAP BACKUP DONE! ---"
 
 echo "--- START MYSQL BACKUP ---"
 # create Folders
-MYSQLFOLDER="/backup/mysqlBackup/"
+MYSQLFOLDER="yourmysqlBackupfolder"
 
 if [ ! -d ${MYSQLFOLDER} ] ; then
         mkdir ${MYSQLFOLDER}
@@ -61,10 +61,10 @@ else
         echo "Folder ${MYSQLFOLDER} already exists"
 fi
 
-# define mysql access
+# define nysql access
 
 USER="root"
-PASS="setpasswordhere"
+PASS="yourpassword"
 DIR="${MYSQLFOLDER}/db"
 
 # Connect to mysql
@@ -131,7 +131,7 @@ echo "--- MYSQL BACKUP DONE! ---"
 echo "--- START CYRUS BACKUP ---"
 
 # Location of the backup directory
-CYRUSFOLDERDIR=/backup/cyrus/
+CYRUSFOLDERDIR=/yourbackupfodlerforcyrus/
 
 # Name of the backup archive
 BACKUPFILE=cyrus_backup_`date +%Y_%m_%d_%H_%M`.tar.bz2
@@ -146,7 +146,7 @@ LOGFILE=/var/log/cyrus_backup.log
 # Lock file
 LOCK=/var/tmp/cyrus_backup.lock
 
-find ${CYRUSFOLDERDIR} -name 'cyrus_backup_*' -mtime +31 -delete
+find ${CYRUSFOLDERDIR} -name 'cyrus_backup_*' -mtime +10 -delete
 
 
 log()
@@ -200,7 +200,7 @@ echo "--- CYRUS BACKUP DONE! ---"
 
 echo "--- STARTING POSTFIX BACKUP ---"
 
-POSTFIXDIR=/backup/postfix/
+POSTFIXDIR=/yourbackupfolderforpostfix/
 
 if [ ! -d ${POSTFIXDIR} ] ; then
         mkdir ${POSTFIXDIR}
@@ -225,11 +225,9 @@ tar cjpf ${POSTFIXDIR}${POSTFIX_STOP} /var/spool/postfix
 
 
 echo "--- POSTFIX BACKUP DONE! ---"
-
-
 echo "--- STARTING KOLAB CONFIG BACKUP ---"
 
-KOLABCONFDIR=/backup/kolabconf/
+KOLABCONFDIR=/yourbackupfolderforkolabconf/
 
 if [ ! -d ${KOLABCONFDIR} ] ; then
         mkdir ${KOLABCONFDIR}
@@ -255,22 +253,3 @@ tar cjpf ${KOLABCONFDIR}${KOLABCONF5} /usr/share/roundcubemail
 tar cjpf ${KOLABCONFDIR}${KOLABCONF6} /usr/share/iRony/
 
 echo "--- KOLAB CONFIG BACKUP DONE! ---"
-echo "--- STARTING SUPPORT WEB BACKUP ---"
-
-SUPPORTDIR=/backup/support/
-
-if [ ! -d ${SUPPORTDIR} ] ; then
-        mkdir ${SUPPORTDIR}
-        echo "Folder ${SUPPORTDIR} has been created"
-else
-        echo "Folder ${SUPPORTDIR} already exists"
-fi
-
-SUPPORTBKP=support_`date +%Y_%m_%d_%H_%M`.tar.bz2
-
-
-find ${SUPPORTDIR} -name 'support_*' -mtime +31 -delete
-
-tar cjpf ${SUPPORTDIR}${SUPPORTBKP} /var/www/support/
-
-echo "--- SUPPORT WEB BACKUP DONE! ---"
